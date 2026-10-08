@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Record vaccination | Immunecare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-card { max-width: 760px; margin: 0 auto; padding: 26px; background: #f4f4f4; border: 1px solid #dfe5eb; border-radius: 12px; }
+        .record-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .form-field { display: flex; flex-direction: column; gap: 7px; }
+        .form-field.wide { grid-column: 1 / -1; }
+        .form-field label { font-weight: 700; color: #2a3c50; }
+        .form-field input, .form-field select { box-sizing: border-box; width: 100%; padding: 11px 12px; border: 1px solid #bfd4ea; border-radius: 8px; background: white; font: inherit; }
+        .help-text { margin: 0; color: #51647d; font-size: 0.9rem; }
+        @media (max-width: 650px) { .record-form { grid-template-columns: 1fr; } .form-field.wide { grid-column: auto; } }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="topbar"><div class="brand">Immunecare</div><div class="user-pill"><span th:text="${username}">User</span><a th:href="@{/logout}">Logout</a></div></div>
+<div class="dashboard-shell">
+    <aside class="sidebar"><nav>
+        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        <a class="nav-link" th:href="@{/patient/register}">Add patient</a>
+        <a class="nav-link" th:href="@{/patient/search}">Search patients</a>
+        <a class="nav-link active" th:href="@{/worker/vaccinations/record}">Record vaccination</a>
+    </nav></aside>
+    <main class="main-panel">
+        <section class="page-card">
+            <h1>Record a vaccination</h1>
+            <p>Select the patient and a vaccine batch with available, unexpired stock.</p>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+            <p th:if="${!hasPatients}">Add a patient record before recording a vaccination.</p>
+            <p th:if="${hasPatients and !hasAvailableStock}">There are no available vaccine batches. <a th:href="@{/vaccine/catalog}">Add a vaccine type</a><span th:if="${isAdmin}">, then <a th:href="@{/admin/shipments}">receive stock</a></span><span th:unless="${isAdmin}">, then ask an administrator to receive stock</span> before recording a dose.</p>
+            <form class="record-form" th:if="${hasPatients and hasAvailableStock}" th:action="@{/worker/vaccinations/record}" method="post">
+                <div class="form-field wide">
+                    <label for="patientId">Patient</label>
+                    <select id="patientId" name="patientId" required>
+                        <option value="">Select a patient</option>
+                        <option th:each="patient : ${patients}" th:value="${patient.patientId}" th:text="|${patient.fullName} - ID ${patient.patientId} - ${patient.nationalId}|"></option>
+                    </select>
+                </div>
+                <div class="form-field wide">
+                    <label for="inventoryId">Vaccine batch</label>
+                    <select id="inventoryId" name="inventoryId" required>
+                        <option value="">Select an available batch</option>
+                        <option th:each="item : ${availableStock}" th:value="${item.inventoryId}" th:text="|${item.vaccine.vaccineName} - batch ${item.batchNumber} - ${item.quantityAvailable} available - expires ${item.expiryDate}|"></option>
+                    </select>
+                    <p class="help-text">One dose will be removed from the selected batch.</p>
+                </div>
+                <div class="form-field">
+                    <label for="doseNumber">Dose number</label>
+                    <input id="doseNumber" name="doseNumber" type="number" min="1" value="1" required>
+                </div>
+                <div class="form-field">
+                    <label for="nextDueDate">Next dose due (optional)</label>
+                    <input id="nextDueDate" name="nextDueDate" type="date">
+                </div>
+                <div class="form-field wide">
+                    <button class="primary-btn" type="submit">Save vaccination record</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Search patients | Immunecare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-card { padding: 24px; background: #f4f4f4; border: 1px solid #dfe5eb; border-radius: 12px; }
+        .search-form { display: flex; gap: 10px; margin: 18px 0; }
+        .search-form input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid #bfd4ea; border-radius: 8px; font: inherit; }
+        .table-wrap { overflow-x: auto; }
+        .page-card table { width: 100%; border-collapse: collapse; }
+        .page-card th, .page-card td { padding: 13px; border-top: 1px solid #dfe5eb; text-align: left; }
+        @media print { .topbar, .sidebar, .search-form, .no-print { display: none; } .dashboard-shell { display: block; } .main-panel { padding: 0; } }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="topbar"><div class="brand">Immunecare</div><div class="user-pill"><span th:text="${username}">User</span><a th:href="@{/logout}">Logout</a></div></div>
+<div class="dashboard-shell">
+    <aside class="sidebar"><nav>
+        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        <a class="nav-link" th:href="@{/patient/register}">Add record</a>
+        <a class="nav-link active" th:href="@{/patient/search}">Search</a>
+        <a class="nav-link" th:href="@{/admin/reports}">Reports</a>
+    </nav></aside>
+    <main class="main-panel">
+        <section class="page-card">
+            <h1>Search patients</h1>
+            <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+            <form class="search-form" th:action="@{/patient/search}" method="get">
+                <input type="search" name="keyword" placeholder="Name, national ID, or patient ID" th:value="${keyword}">
+                <button class="secondary-btn" type="submit">Search</button>
+                <a class="secondary-btn" th:href="@{/patient/search}">Show all</a>
+            </form>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Patient ID</th><th>Name</th><th>National ID</th><th>Date of birth</th><th>Phone</th><th>Email</th></tr></thead>
+                <tbody>
+                <tr th:each="patient : ${patients}">
+                    <td th:text="${patient.patientId}"></td><td th:text="${patient.fullName}"></td>
+                    <td th:text="${patient.nationalId}"></td><td th:text="${patient.dateOfBirth}"></td>
+                    <td th:text="${patient.contactPhone}"></td><td th:text="${patient.contactEmail}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(patients)}"><td colspan="6">No patient records found.</td></tr>
+                </tbody>
+            </table></div>
+            <p class="no-print"><a th:href="@{/patient/register}">Add a patient record</a></p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

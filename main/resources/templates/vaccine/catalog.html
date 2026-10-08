@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vaccine catalog | Immunecare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-card { padding: 24px; background: #f4f4f4; border: 1px solid #dfe5eb; border-radius: 12px; margin-bottom: 20px; }
+        .record-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .field { display: flex; flex-direction: column; gap: 7px; }
+        .field.wide { grid-column: 1 / -1; }
+        .field label { font-weight: 700; }
+        .field input, .field textarea { padding: 11px 12px; border: 1px solid #bfd4ea; border-radius: 8px; font: inherit; }
+        .field textarea { min-height: 70px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-top: 1px solid #dfe5eb; text-align: left; }
+        @media(max-width:650px) { .record-form { grid-template-columns: 1fr; } .field.wide { grid-column: auto; } }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="topbar"><div class="brand">Immunecare</div><div class="user-pill"><span th:text="${username}">User</span><a th:href="@{/logout}">Logout</a></div></div>
+<div class="dashboard-shell">
+    <aside class="sidebar"><nav>
+        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        <a class="nav-link active" th:href="@{/vaccine/catalog}">Vaccine catalog</a>
+        <a class="nav-link" th:href="@{/admin/shipments}">Add stock</a>
+        <a class="nav-link" th:href="@{/worker/vaccinations/record}">Record vaccination</a>
+    </nav></aside>
+    <main class="main-panel">
+        <section class="page-card">
+            <h1>Vaccine catalog</h1>
+            <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+            <form class="record-form" th:action="@{/vaccine/add}" method="post">
+                <div class="field"><label for="vaccineName">Vaccine name</label><input id="vaccineName" name="vaccineName" required maxlength="100"></div>
+                <div class="field"><label for="manufacturer">Manufacturer</label><input id="manufacturer" name="manufacturer" required maxlength="150"></div>
+                <div class="field"><label for="dosesRequired">Doses required</label><input id="dosesRequired" name="dosesRequired" type="number" min="1" value="1" required></div>
+                <div class="field"><label for="recommendedIntervalDays">Recommended interval (days)</label><input id="recommendedIntervalDays" name="recommendedIntervalDays" type="number" min="0" value="0" required></div>
+                <div class="field wide"><label for="description">Description (optional)</label><textarea id="description" name="description"></textarea></div>
+                <div class="field wide"><button class="primary-btn" type="submit">Add vaccine type</button></div>
+            </form>
+        </section>
+        <section class="page-card">
+            <h2>Existing vaccine types</h2>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Name</th><th>Manufacturer</th><th>Doses required</th><th>Interval (days)</th></tr></thead>
+                <tbody>
+                <tr th:each="vaccine : ${vaccines}"><td th:text="${vaccine.vaccineName}"></td><td th:text="${vaccine.manufacturer}"></td><td th:text="${vaccine.dosesRequired}"></td><td th:text="${vaccine.recommendedIntervalDays}"></td></tr>
+                <tr th:if="${#lists.isEmpty(vaccines)}"><td colspan="4">No vaccine types have been added yet.</td></tr>
+                </tbody>
+            </table></div>
+            <p><a th:href="@{/admin/shipments}">Next: receive vaccine stock</a></p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

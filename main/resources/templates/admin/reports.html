@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vaccination report | Immunecare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-card { padding: 24px; background: #f4f4f4; border: 1px solid #dfe5eb; border-radius: 12px; }
+        .table-wrap { overflow-x: auto; }
+        .page-card table { width: 100%; border-collapse: collapse; }
+        .page-card th, .page-card td { padding: 13px; border-top: 1px solid #dfe5eb; text-align: left; }
+        @media print { .topbar, .sidebar, .no-print { display: none; } .dashboard-shell { display: block; } .main-panel { padding: 0; } }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="topbar"><div class="brand">Immunecare</div><div class="user-pill"><span th:text="${username}">User</span><a th:href="@{/logout}">Logout</a></div></div>
+<div class="dashboard-shell">
+    <aside class="sidebar"><nav>
+        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        <a class="nav-link" th:href="@{/patient/register}">Add record</a>
+        <a class="nav-link" th:href="@{/patient/search}">Search</a>
+        <a class="nav-link active" th:href="@{/admin/reports}">Reports</a>
+    </nav></aside>
+    <main class="main-panel">
+        <section class="page-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div><h1>Vaccination report</h1><p>Patients: <strong th:text="${#lists.size(patients)}">0</strong> · Vaccinations: <strong th:text="${#lists.size(vaccinations)}">0</strong></p></div>
+                <button class="secondary-btn no-print" type="button" onclick="window.print()">Print report</button>
+            </div>
+            <h2>Vaccination records</h2>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Patient</th><th>National ID</th><th>Vaccine</th><th>Dose</th><th>Date administered</th><th>Next due</th></tr></thead>
+                <tbody>
+                <tr th:each="record : ${vaccinations}">
+                    <td th:text="${record.patient.fullName}"></td><td th:text="${record.patient.nationalId}"></td>
+                    <td th:text="${record.vaccine.vaccineName}"></td><td th:text="${record.doseNumber}"></td>
+                    <td th:text="${record.dateAdministered}"></td><td th:text="${record.nextDueDate != null ? record.nextDueDate : 'Not scheduled'}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(vaccinations)}"><td colspan="6">No vaccinations have been recorded yet.</td></tr>
+                </tbody>
+            </table></div>
+            <h2>Patient records</h2>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Patient ID</th><th>Name</th><th>National ID</th><th>Date of birth</th><th>Phone</th><th>Email</th></tr></thead>
+                <tbody>
+                <tr th:each="patient : ${patients}">
+                    <td th:text="${patient.patientId}"></td><td th:text="${patient.fullName}"></td>
+                    <td th:text="${patient.nationalId}"></td><td th:text="${patient.dateOfBirth}"></td>
+                    <td th:text="${patient.contactPhone}"></td><td th:text="${patient.contactEmail}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(patients)}"><td colspan="6">No patient records have been added yet.</td></tr>
+                </tbody>
+            </table></div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

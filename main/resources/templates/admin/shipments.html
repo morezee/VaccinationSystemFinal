@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vaccine stock | Immunecare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-card { padding: 24px; background: #f4f4f4; border: 1px solid #dfe5eb; border-radius: 12px; margin-bottom: 20px; }
+        .record-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .field { display: flex; flex-direction: column; gap: 7px; }
+        .field.wide { grid-column: 1 / -1; }
+        .field label { font-weight: 700; }
+        .field input, .field select { padding: 11px 12px; border: 1px solid #bfd4ea; border-radius: 8px; font: inherit; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-top: 1px solid #dfe5eb; text-align: left; }
+        @media(max-width:650px) { .record-form { grid-template-columns: 1fr; } .field.wide { grid-column: auto; } }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="topbar"><div class="brand">Immunecare</div><div class="user-pill"><span th:text="${username}">User</span><a th:href="@{/logout}">Logout</a></div></div>
+<div class="dashboard-shell">
+    <aside class="sidebar"><nav>
+        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        <a class="nav-link" th:href="@{/vaccine/catalog}">Vaccine catalog</a>
+        <a class="nav-link active" th:href="@{/admin/shipments}">Add stock</a>
+        <a class="nav-link" th:href="@{/worker/vaccinations/record}">Record vaccination</a>
+        <a class="nav-link" th:href="@{/admin/reports}">Reports</a>
+    </nav></aside>
+    <main class="main-panel">
+        <section class="page-card">
+            <h1>Receive vaccine stock</h1>
+            <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+            <p th:if="${#lists.isEmpty(vaccines)}">Add a vaccine type to the catalog before receiving stock. <a th:href="@{/vaccine/catalog}">Open vaccine catalog</a>.</p>
+            <form class="record-form" th:if="${!#lists.isEmpty(vaccines)}" th:action="@{/admin/shipments}" method="post">
+                <div class="field wide"><label for="vaccineId">Vaccine</label><select id="vaccineId" name="vaccineId" required><option value="">Select vaccine</option><option th:each="vaccine : ${vaccines}" th:value="${vaccine.vaccineId}" th:text="${vaccine.vaccineName}"></option></select></div>
+                <div class="field"><label for="batchNumber">Batch number</label><input id="batchNumber" name="batchNumber" required maxlength="50"></div>
+                <div class="field"><label for="quantityReceived">Quantity</label><input id="quantityReceived" name="quantityReceived" type="number" min="1" required></div>
+                <div class="field"><label for="manufactureDate">Manufacture date</label><input id="manufactureDate" name="manufactureDate" type="date" required></div>
+                <div class="field"><label for="expiryDate">Expiry date</label><input id="expiryDate" name="expiryDate" type="date" required></div>
+                <div class="field wide"><label for="supplierName">Supplier</label><input id="supplierName" name="supplierName" required maxlength="150"></div>
+                <div class="field wide"><button class="primary-btn" type="submit">Add stock batch</button></div>
+            </form>
+        </section>
+        <section class="page-card">
+            <h2>Current batches</h2>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Vaccine</th><th>Batch</th><th>Available</th><th>Expiry</th><th>Supplier</th></tr></thead>
+                <tbody>
+                <tr th:each="item : ${inventoryList}"><td th:text="${item.vaccine.vaccineName}"></td><td th:text="${item.batchNumber}"></td><td th:text="${item.quantityAvailable}"></td><td th:text="${item.expiryDate}"></td><td th:text="${item.supplierName}"></td></tr>
+                <tr th:if="${#lists.isEmpty(inventoryList)}"><td colspan="5">No stock batches have been added yet.</td></tr>
+                </tbody>
+            </table></div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

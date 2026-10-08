@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Immunecare Sign In</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="login-body">
+<div class="login-shell">
+    <div class="login-card">
+        <figure class="login-photo">
+            <img th:src="@{/images/patient-care.png}" alt="A doctor reviewing a tablet with a patient">
+        </figure>
+        <div class="brand-icon">
+            <span>🛡️</span>
+        </div>
+
+        <h1>Immunecare Sign In</h1>
+        <p>Hospital Immunization Management Portal</p>
+
+        <div class="demo-box">
+            <h3>QUICK DEMO LOGIN PERSONA:</h3>
+            <div class="demo-grid">
+                <form th:action="@{/login}" method="post">
+                    <input type="hidden" name="username" value="admin" />
+                    <input type="hidden" name="password" value="demo123" />
+                    <button type="submit" class="demo-btn">
+                        <span>👤</span>
+                        <span>Admin</span>
+                    </button>
+                </form>
+                <form th:action="@{/login}" method="post">
+                    <input type="hidden" name="username" value="nurse" />
+                    <input type="hidden" name="password" value="demo123" />
+                    <button type="submit" class="demo-btn">
+                        <span>👩‍⚕️</span>
+                        <span>Nurse/Worker</span>
+                    </button>
+                </form>
+                <form th:action="@{/login}" method="post">
+                    <input type="hidden" name="username" value="patient" />
+                    <input type="hidden" name="password" value="demo123" />
+                    <button type="submit" class="demo-btn">
+                        <span>👨‍🦱</span>
+                        <span>Patient</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${error != null}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${message != null}" class="alert alert-success" th:text="${message}"></div>
+
+        <form th:action="@{/login}" method="post" class="login-form">
+            <label>USERNAME</label>
+            <input type="text" name="username" placeholder="Enter username (e.g. admin)" required />
+
+            <label>PASSWORD</label>
+            <input type="password" name="password" placeholder="••••••••" required />
+
+            <button type="submit" class="primary-btn">Log In to System →</button>
+        </form>
+
+        <div class="system-footer">Immunecare System v2.4 • MySQL 8.0 Engine Integrated</div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add patient record | Immunecare</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-card { max-width: 780px; margin: 0 auto; padding: 26px; background: #f4f4f4; border: 1px solid #dfe5eb; border-radius: 12px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .form-field { display: flex; flex-direction: column; gap: 7px; }
+        .form-field.wide { grid-column: 1 / -1; }
+        .form-field label { font-weight: 700; color: #2a3c50; }
+        .form-field input, .form-field select, .form-field textarea { box-sizing: border-box; width: 100%; padding: 11px 12px; border: 1px solid #bfd4ea; border-radius: 8px; background: white; font: inherit; }
+        .form-field textarea { min-height: 80px; resize: vertical; }
+        .page-title { margin-top: 0; }
+        @media (max-width: 650px) { .form-grid { grid-template-columns: 1fr; } .form-field.wide { grid-column: auto; } .sidebar { width: auto; } }
+    </style>
+</head>
+<body class="dashboard-body">
+<div class="topbar"><div class="brand">Immunecare</div><div class="user-pill"><span th:text="${username}">User</span><a th:href="@{/logout}">Logout</a></div></div>
+<div class="dashboard-shell">
+    <aside class="sidebar"><nav>
+        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+        <a class="nav-link active" th:href="@{/patient/register}">Add record</a>
+        <a class="nav-link" th:href="@{/patient/search}">Search</a>
+        <a class="nav-link" th:href="@{/admin/reports}">Reports</a>
+    </nav></aside>
+    <main class="main-panel">
+        <section class="page-card">
+            <h1 class="page-title">Add patient record</h1>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+            <form th:action="@{/patient/register}" method="post">
+                <div class="form-grid">
+                    <div class="form-field wide"><label for="userId">Patient portal account (optional)</label>
+                        <select id="userId" name="userId">
+                            <option value="">No portal account</option>
+                            <option th:each="user : ${patientUsers}" th:value="${user.userId}" th:text="|${user.username} (${user.email})|"></option>
+                        </select>
+                    </div>
+                    <div class="form-field"><label for="fullName">Full name</label><input id="fullName" name="fullName" required maxlength="150"></div>
+                    <div class="form-field"><label for="nationalId">National ID</label><input id="nationalId" name="nationalId" required maxlength="30"></div>
+                    <div class="form-field"><label for="dateOfBirth">Date of birth</label><input id="dateOfBirth" name="dateOfBirth" type="date" required></div>
+                    <div class="form-field"><label for="gender">Gender</label><select id="gender" name="gender" required><option value="">Select</option><option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}"></option></select></div>
+                    <div class="form-field"><label for="contactPhone">Phone</label><input id="contactPhone" name="contactPhone" type="tel" required maxlength="20"></div>
+                    <div class="form-field"><label for="contactEmail">Email</label><input id="contactEmail" name="contactEmail" type="email" maxlength="100"></div>
+                    <div class="form-field wide"><label for="residentialAddress">Residential address</label><textarea id="residentialAddress" name="residentialAddress"></textarea></div>
+                </div>
+                <button class="primary-btn" type="submit">Save patient record</button>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

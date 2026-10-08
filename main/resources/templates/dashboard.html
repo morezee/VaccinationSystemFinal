@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Immunecare Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="dashboard-body">
+<div class="topbar">
+    <div class="brand">Immunecare</div>
+    <div class="user-pill">
+        <span class="avatar">NT</span>
+        <span th:text="${username}">User</span>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+
+<div class="dashboard-shell">
+    <aside class="sidebar">
+        <nav>
+            <a class="nav-link active" href="#">Dashboard</a>
+            <a class="nav-link" th:href="@{/immunecare.html}">ImmuneCare vaccination system</a>
+            <a class="nav-link" th:if="${isStaff}" th:href="@{/patient/register}">Add record</a>
+            <a class="nav-link" th:if="${isStaff}" th:href="@{/patient/search}">Search patients</a>
+            <a class="nav-link" th:if="${isStaff}" th:href="@{/worker/vaccinations/record}">Record vaccination</a>
+            <a class="nav-link" th:if="${isStaff}" th:href="@{/vaccine/catalog}">Vaccine catalog</a>
+            <a class="nav-link" th:if="${isAdmin}" th:href="@{/admin/shipments}">Add vaccine stock</a>
+            <a class="nav-link" th:if="${isAdmin}" th:href="@{/admin/reports}">Reports</a>
+            <a class="nav-link" th:unless="${isStaff}" th:href="@{/patient/search}">My patient record</a>
+        </nav>
+    </aside>
+
+    <main class="main-panel">
+        <section class="welcome-hero">
+            <div class="welcome-copy">
+                <p class="eyebrow">IMMUNIZATION CARE</p>
+                <h1>Care that keeps communities protected.</h1>
+                <p>Keep patient records and vaccination visits together in one place.</p>
+            </div>
+            <figure class="welcome-photo">
+                <img th:src="@{/images/care-team.png}" alt="A healthcare professional with her clinical team">
+            </figure>
+        </section>
+        <div class="cards-row" th:if="${isStaff}">
+            <div class="stat-card">
+                <div class="stat-label">Patients recorded</div>
+                <div class="stat-value" th:text="${patientCount}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Doses due this week</div>
+                <div class="stat-value warning" th:text="${dueThisWeek}">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Overdue boosters</div>
+                <div class="stat-value danger" th:text="${overdueBoosters}">0</div>
+            </div>
+        </div>
+
+        <div class="cards-row" th:unless="${isStaff}">
+            <div class="stat-card">
+                <div class="stat-label">Your patient record</div>
+                <div class="stat-value" th:text="${myPatient != null ? '1' : '0'}">0</div>
+                <a th:if="${myPatient != null}" th:href="@{/patient/search}">View your record</a>
+                <p th:if="${myPatient == null}">No patient record is linked to this login yet. Contact clinic staff.</p>
+            </div>
+        </div>
+
+        <div class="button-row" th:if="${isStaff}">
+            <a class="secondary-btn small" th:href="@{/immunecare.html}">Open ImmuneCare vaccination system</a>
+            <a class="primary-btn small" th:href="@{/patient/register}">Add record</a>
+            <a class="secondary-btn small" th:href="@{/patient/search}">Search patient</a>
+            <a class="secondary-btn small" th:href="@{/worker/vaccinations/record}">Record vaccination</a>
+            <a class="secondary-btn small" th:if="${isStaff}" th:href="@{/vaccine/catalog}">Vaccine catalog</a>
+            <a class="secondary-btn small" th:if="${isAdmin}" th:href="@{/admin/shipments}">Add vaccine stock</a>
+            <a class="secondary-btn small" th:if="${isAdmin}" th:href="@{/admin/reports}">Generate report</a>
+        </div>
+        <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+
+        <section class="activity-panel" th:if="${isStaff}">
+            <h3>Patient records</h3>
+            <table>
+                <thead><tr><th>Patient ID</th><th>Name</th><th>National ID</th><th>Date of birth</th><th>Phone</th></tr></thead>
+                <tbody>
+                <tr th:each="patient : ${recentPatients}">
+                    <td th:text="${patient.patientId}"></td>
+                    <td th:text="${patient.fullName}"></td>
+                    <td th:text="${patient.nationalId}"></td>
+                    <td th:text="${patient.dateOfBirth}"></td>
+                    <td th:text="${patient.contactPhone}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentPatients)}"><td colspan="5">No patient records have been added yet.</td></tr>
+                </tbody>
+            </table>
+            <p style="padding: 0 18px"><a th:href="@{/patient/search}">Search all patients</a></p>
+        </section>
+
+    </main>
+</div>
+</body>
+</html>
